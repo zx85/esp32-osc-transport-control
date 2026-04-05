@@ -48,14 +48,26 @@ void sendOsc(const char* address, float value) {
 
 void onPlayPressed() { Serial.println("Button: Play Pressed"); sendOsc("/play", 1.0f); }
 void onStopPressed() { Serial.println("Button: Stop Pressed"); sendOsc("/stop", 1.0f); }
-void onRecordPressed() { Serial.println("Button: recor Pressed"); sendOsc("/record", 1.0f); }
+void onRecordPressed() { Serial.println("Button: Record Pressed"); sendOsc("/record", 1.0f); }
 
 void onTransportStateReceived(const OscMessage& m) {
   if (m.size() == 0) return;
   float val = m.arg<float>(0);
   
+  bool isActive = (val > 0.5f);
+
   if (m.address() == "/play") {
     transportStatus = (val > 0.5f) ? "Playing" : "Stopped";
+    if (!isActive) {
+      transportStatus = "Stopped";
+      digitalWrite(PIN_LED_RECORD, LOW);
+    } else if (transportStatus != "Recording") {
+      transportStatus = "Playing";
+      digitalWrite(PIN_LED_RECORD, LOW);
+    }
+  } else if (m.address() == "/record") {
+    transportStatus = isActive ? "Recording" : "Playing";
+    digitalWrite(PIN_LED_RECORD, isActive ? HIGH : LOW);
   }
   updateDisplay();
 }
@@ -98,6 +110,7 @@ void goToSleep() {
   display.clearDisplay();
   display.display();
   display.ssd1306_command(SSD1306_DISPLAYOFF);
+  digitalWrite(PIN_LED_RECORD, LOW);
   
   // Wake up on any button press (Low level)
   gpio_wakeup_enable((gpio_num_t)PIN_BUTTON_PLAY, GPIO_INTR_LOW_LEVEL);
@@ -132,6 +145,10 @@ void setup() {
   pinMode(PIN_BUTTON_STOP, INPUT_PULLUP);
   pinMode(PIN_BUTTON_RECORD, INPUT_PULLUP);
 
+  // Initialize LED
+  pinMode(PIN_LED_RECORD, OUTPUT);
+  digitalWrite(PIN_LED_RECORD, LOW);
+
   // WiFi Connection
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -150,6 +167,7 @@ void setup() {
   OscWiFi.subscribe(local_port, "/beattime", onTimecodeReceived);
   OscWiFi.subscribe(local_port, "/time", onTimecodeReceived);
   OscWiFi.subscribe(local_port, "/play", onTransportStateReceived);
+  OscWiFi.subscribe(local_port, "/record", onTransportStateReceived);
 
   resetInactivity();
 }

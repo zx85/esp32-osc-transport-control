@@ -8,14 +8,15 @@ const char* ssid = "YOUR_SSID";
 const char* password = "YOUR_PASSWORD";
 
 // Reaper OSC Settings
-const char* reaper_ip = "192.168.75.71";
+const char* reaper_ip = "192.168.1.111";
 const uint16_t reaper_port = 8000;
 const uint16_t local_port = 9000;
 
 // Pin Mapping (ESP32-S2 Mini)
-#define PIN_BUTTON_START 1
-#define PIN_BUTTON_STOP 3
-#define PIN_BUTTON_REWIND 5
+#define PIN_BUTTON_PLAY 1
+#define PIN_BUTTON_RECORD 3
+#define PIN_BUTTON_STOP 5
+#define PIN_LED_RECORD 7 // 330 ohm resistor
 #define PIN_I2C_SDA 33
 #define PIN_I2C_SCL 35
 
