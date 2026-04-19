@@ -7,6 +7,11 @@
 const char* ssid = "YOUR_SSID";
 const char* password = "YOUR_PASSWORD";
 
+// Example static IP address
+// IPAddress STATIC_IP(192, 168, 1, 100);
+// IPAddress GATEWAY(192, 168, 1, 1);
+// IPAddress SUBNET(255, 255, 255, 0);
+
 // Reaper OSC Settings
 const char* reaper_ip = "192.168.1.111";
 const uint16_t reaper_port = 8000;

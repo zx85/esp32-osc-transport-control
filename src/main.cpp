@@ -150,6 +150,12 @@ void setup() {
   digitalWrite(PIN_LED_RECORD, LOW);
 
   // WiFi Connection
+  #if defined(STATIC_IP) && defined(GATEWAY) && defined(SUBNET)
+  if (!WiFi.config(STATIC_IP, GATEWAY, SUBNET)) {
+    Serial.println("Static IP configuration failed!");
+  }
+  #endif
+
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
