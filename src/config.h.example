@@ -8,6 +8,7 @@ const char* ssid = "YOUR_SSID";
 const char* password = "YOUR_PASSWORD";
 
 // Example static IP address
+// #define USE_STATIC_IP 
 // IPAddress STATIC_IP(192, 168, 1, 100);
 // IPAddress GATEWAY(192, 168, 1, 1);
 // IPAddress SUBNET(255, 255, 255, 0);

@@ -57,17 +57,23 @@ void onTransportStateReceived(const OscMessage& m) {
   bool isActive = (val > 0.5f);
 
   if (m.address() == "/play") {
-    transportStatus = (val > 0.5f) ? "Playing" : "Stopped";
     if (!isActive) {
       transportStatus = "Stopped";
       digitalWrite(PIN_LED_RECORD, LOW);
     } else if (transportStatus != "Recording") {
+      // Only set to "Playing" if we aren't currently recording
       transportStatus = "Playing";
       digitalWrite(PIN_LED_RECORD, LOW);
     }
   } else if (m.address() == "/record") {
-    transportStatus = isActive ? "Recording" : "Playing";
-    digitalWrite(PIN_LED_RECORD, isActive ? HIGH : LOW);
+    if (isActive) {
+      transportStatus = "Recording";
+      digitalWrite(PIN_LED_RECORD, HIGH);
+    } else {
+      // When record is toggled off, Reaper usually continues playing
+      transportStatus = "Playing";
+      digitalWrite(PIN_LED_RECORD, LOW);
+    }
   }
   updateDisplay();
 }
@@ -150,12 +156,13 @@ void setup() {
   digitalWrite(PIN_LED_RECORD, LOW);
 
   // WiFi Connection
-  #if defined(STATIC_IP) && defined(GATEWAY) && defined(SUBNET)
+  #ifdef USE_STATIC_IP
   if (!WiFi.config(STATIC_IP, GATEWAY, SUBNET)) {
     Serial.println("Static IP configuration failed!");
   }
   #endif
 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
