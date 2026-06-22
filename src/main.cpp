@@ -16,7 +16,7 @@ unsigned long lastDebounceTime = 0;
 const unsigned long DEBOUNCE_DELAY = 50;
 
 unsigned long lastActivity = 0;
-String currentTimecode = "00:00:00:00";
+String currentTimecode = "0.00";
 String transportStatus = "Stopped";
 bool isDisplayOn = true;
 
